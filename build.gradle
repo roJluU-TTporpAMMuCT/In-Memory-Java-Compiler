@@ -1,0 +1,33 @@
+
+plugins {
+    // Apply the java-library plugin for API and implementation separation.
+    id 'java-library'
+    id 'maven-publish'
+}
+
+
+group = 'org.negro'
+version = '0.0.1'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            library(MavenPublication) {
+                setGroupId "org.negro"
+                setArtifactId "compiler"
+                version "0.0.1"
+
+            }
+        }
+    }
+}
