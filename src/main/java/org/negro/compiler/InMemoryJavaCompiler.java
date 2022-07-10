@@ -18,7 +18,6 @@ public class InMemoryJavaCompiler {
 	boolean ignoreWarnings = false;
 
 	private Map<String, SourceCode> sourceCodes = new HashMap<String, SourceCode>();
-	private Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
 	
 	public InMemoryJavaCompiler(Instrumentation inst) {
 		javac = ToolProvider.getSystemJavaCompiler();
@@ -71,18 +70,14 @@ public class InMemoryJavaCompiler {
 		if (!result || collector.getDiagnostics().size() > 0) 
 			diagnoseResult(collector.getDiagnostics());
 
-		Map<String, Class<?>> new_classes = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
 		for (String className : sourceCodes.keySet()) {
 			Class<?> cl = classLoader.loadClass(className);
-			if(classes.get(className) == null)
-				classes.put(className, cl);
-			else
-				inst.redefineClasses(new ClassDefinition(cl, classLoader.getByteCode(className) ) );
-			
-			new_classes.put(className, cl);
+			inst.redefineClasses(new ClassDefinition(cl, classLoader.getByteCode(className) ) );
+			classes.put(className, cl);
 		}
 		sourceCodes.clear();
-		return new_classes;
+		return classes;
 	}
 	
 	public void diagnoseResult(List<Diagnostic<? extends JavaFileObject>> diagnostics) {
